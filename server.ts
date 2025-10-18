@@ -4,22 +4,23 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import serverless from 'serverless-http';
 import 'dotenv/config';
 import { setupSocketHandlers, startBookingTimer, extendBookingTimer } from './socket/socketHandler';
 import { notFoundHandler, errorHandler } from './middleware/errorHandler';
 
 
 const app = express();
-const server = createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*", // In production, specify your frontend URL
-    methods: ["GET", "POST"]
-  }
-});
+// const server = createServer(app);
+// const io = new Server(server, {
+//   cors: {
+//     origin: "*", // In production, specify your frontend URL
+//     methods: ["GET", "POST"]
+//   }
+// });
 
 // Setup socket handlers
-setupSocketHandlers(io);
+// setupSocketHandlers(io);
 
 // Middlewares
 app.use(helmet());
@@ -68,33 +69,42 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 // Export functions for use in controllers
-export { io, startBookingTimer, extendBookingTimer };
+// export { io, startBookingTimer, extendBookingTimer };
+
+// Initialize database and start server
+// async function startServer() {
+//   try {
+//     // Connect to database
+//     await connectDB();
+//     // console.log(' Database connection established');
+
+//     // const PORT = process.env.PORT || 5000;
+//     // server.listen(PORT, () => {
+//     //   console.log(`Server running on port ${PORT}`);
+//     //   // console.log(`API Base URL: http://localhost:${PORT}/api`);
+//     // });
+
+//   } catch (error) {
+//     console.error(' Failed to start server:', (error as Error).message);
+//     console.log('\n Try running: npm run setup-db');
+//     process.exit(1);
+//   }
+// }
 
 let isConnected = false;
-// Initialize database and start server
+
 async function startServer() {
-  try {
-    // Connect to database
+  if (!isConnected) {
     await connectDB();
-    // console.log(' Database connection established');
-
-    // const PORT = process.env.PORT || 5000;
-    // server.listen(PORT, () => {
-    //   console.log(`Server running on port ${PORT}`);
-    //   // console.log(`API Base URL: http://localhost:${PORT}/api`);
-    // });
-
-  } catch (error) {
-    console.error(' Failed to start server:', (error as Error).message);
-    console.log('\n Try running: npm run setup-db');
-    process.exit(1);
+    isConnected = true;
   }
 }
-app.use((req,res,next)=>{
-  if(!isConnected){
-    startServer()
-  }
-  next()
-})
-// startServer();
-export default app;
+
+app.use(async (req, res, next) => {
+  await startServer();
+  next();
+});
+
+// ✅ Instead of exporting `app` directly, export serverless handler
+export default serverless(app);
+
