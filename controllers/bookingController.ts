@@ -4,7 +4,7 @@ import Service from '../models/Service';
 import Booking from '../models/Booking';
 import User from '../models/User';
 import mongoose from 'mongoose';
-import { startBookingTimer, extendBookingTimer } from '../socket/socketHandler';
+// import { startBookingTimer, extendBookingTimer } from '../socket/socketHandler';
 // import { io } from '../server';
 
 function generateBookingReference(): string {
@@ -278,7 +278,7 @@ export const assignMaidToBooking = async (req: Request, res: Response): Promise<
     const booking = await Booking.findById({ _id: bookingId, });
     if (!booking) return res.status(404).json({ success: false, message: 'Booking not found' });
 
-    // Generate a 6-digit PIN for the booking
+    // Generate a 4-digit PIN for the booking
     const pin = Math.floor(1000 + Math.random() * 9000).toString();
 
     const updateBooking = await Booking.findByIdAndUpdate(bookingId, { status, maid_id, pin }, { new: true });
