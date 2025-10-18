@@ -2,12 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
+// import { createServer } from 'http';
+// import { Server } from 'socket.io';
 import serverless from 'serverless-http';
 import 'dotenv/config';
-import { setupSocketHandlers, startBookingTimer, extendBookingTimer } from './socket/socketHandler';
-import { notFoundHandler, errorHandler } from './middleware/errorHandler';
+// import { setupSocketHandlers, startBookingTimer, extendBookingTimer } from './socket/socketHandler';
+// import { notFoundHandler, errorHandler } from './middleware/errorHandler';
 
 
 const app = express();
@@ -63,10 +63,10 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/reviews', reviewRoutes);
 
 // 404 handler
-app.use(notFoundHandler);
+// app.use(notFoundHandler);
 
 // Global error handler
-app.use(errorHandler);
+// app.use(errorHandler);
 
 // Export functions for use in controllers
 // export { io, startBookingTimer, extendBookingTimer };
