@@ -1,18 +1,21 @@
 import express from 'express';
 import { body } from 'express-validator';
 import { authenticateToken } from '../middleware/auth.js';
-import { addReview, getReviewsByMaid } from '../controllers/reviewController';
+import { addReview, getReviewsByMaid } from '../controllers/reviewController.js';
+import multer from 'multer';
 const router = express.Router();
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 router.use(authenticateToken);
 const reviewValidation = [
-    body('bookingId').isString().withMessage('bookingId required'),
-    body('maidId').isString().withMessage('maidId required'),
+    body('bookingId').optional().notEmpty().withMessage('bookingId required'),
+    body('maidId').optional().notEmpty().withMessage('maidId required'),
     body('rating')
-        .isInt({ min: 1, max: 5 })
+        .optional().notEmpty()
         .withMessage('rating between 1 and 5 required'),
     body('reviewMessage').optional().isString(),
 ];
-router.post('/', reviewValidation, addReview);
+router.post('/', reviewValidation, upload.array('images', 5), addReview);
 router.get('/maid/:maidId', getReviewsByMaid);
 export default router;
 //# sourceMappingURL=reviews.js.map

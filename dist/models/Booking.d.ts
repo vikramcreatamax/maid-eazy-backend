@@ -15,10 +15,8 @@ export interface IBooking extends Document {
     actual_start_time: Date;
     timer_end_time: Date;
 }
-declare const _default: mongoose.Model<IBooking, {}, {}, {}, mongoose.Document<unknown, {}, IBooking, {}, {}> & IBooking & Required<{
-    _id: unknown;
-}> & {
-    __v: number;
+declare const _default: mongoose.Model<IBooking, {}, {}, {}, mongoose.Document<unknown, {}, IBooking> & IBooking & {
+    _id: mongoose.Types.ObjectId;
 }, any>;
 export default _default;
 //# sourceMappingURL=Booking.d.ts.map

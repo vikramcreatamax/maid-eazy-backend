@@ -7,10 +7,8 @@ export interface IService extends Document {
     total_amount: number;
     is_active: boolean;
 }
-declare const _default: mongoose.Model<IService, {}, {}, {}, mongoose.Document<unknown, {}, IService, {}, {}> & IService & Required<{
-    _id: unknown;
-}> & {
-    __v: number;
+declare const _default: mongoose.Model<IService, {}, {}, {}, mongoose.Document<unknown, {}, IService> & IService & {
+    _id: mongoose.Types.ObjectId;
 }, any>;
 export default _default;
 //# sourceMappingURL=Service.d.ts.map

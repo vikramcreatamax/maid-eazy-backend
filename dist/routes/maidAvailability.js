@@ -1,7 +1,7 @@
 import express from 'express';
-import { authenticateToken } from '../middleware/auth';
-import { requireAdmin } from '../middleware/admin';
-import { getMaidAvailability, createAvailability, updateAvailability, deleteAvailability, getAllAvailability } from '../controllers/maidAvailabilityController';
+import { authenticateToken } from '../middleware/auth.js';
+import { requireAdmin } from '../middleware/admin.js';
+import { getMaidAvailability, createAvailability, updateAvailability, deleteAvailability, getAllAvailability } from '../controllers/maidAvailabilityController.js';
 const router = express.Router();
 router.use(authenticateToken);
 router.get('/maid/:maidId', getMaidAvailability);

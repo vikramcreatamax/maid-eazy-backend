@@ -1,6 +1,6 @@
 import express from 'express';
 import { authenticateToken } from '../middleware/auth.js';
-import { processPayment, getPaymentByBooking, getPaymentByUser, addAmountInWallet, verifyPaymentProcess } from '../controllers/paymentController';
+import { processPayment, getPaymentByBooking, getPaymentByUser, addAmountInWallet, verifyPaymentProcess } from '../controllers/paymentController.js';
 
 const router = express.Router();
 

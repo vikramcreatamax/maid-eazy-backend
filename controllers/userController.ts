@@ -1,8 +1,8 @@
 // import { User } from '../models/index.js';
 import { validationResult } from 'express-validator';
 import { Request, Response } from 'express';
-import User from '../models/User';
-import cloudinary from '../middleware/cloudinary';
+import User from '../models/User.js';
+import cloudinary from '../middleware/cloudinary.js';
 
 interface MulterFile extends Express.Multer.File {
   buffer: Buffer;

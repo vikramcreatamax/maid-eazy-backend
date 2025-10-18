@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import Booking from '../models/Booking';
+import Booking from '../models/Booking.js';
 
 export const activeTimers = new Map<string, NodeJS.Timeout>();
 

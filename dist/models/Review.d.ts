@@ -8,10 +8,8 @@ export interface IReview extends Document {
     images?: String[];
     is_anonymous: boolean;
 }
-declare const _default: mongoose.Model<IReview, {}, {}, {}, mongoose.Document<unknown, {}, IReview, {}, {}> & IReview & Required<{
-    _id: unknown;
-}> & {
-    __v: number;
+declare const _default: mongoose.Model<IReview, {}, {}, {}, mongoose.Document<unknown, {}, IReview> & IReview & {
+    _id: mongoose.Types.ObjectId;
 }, any>;
 export default _default;
 //# sourceMappingURL=Review.d.ts.map

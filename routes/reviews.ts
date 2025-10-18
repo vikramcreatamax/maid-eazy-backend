@@ -1,7 +1,7 @@
 import express from 'express';
 import { body } from 'express-validator';
 import { authenticateToken } from '../middleware/auth.js';
-import { addReview, getReviewsByMaid } from '../controllers/reviewController';
+import { addReview, getReviewsByMaid } from '../controllers/reviewController.js';
 import multer from 'multer';
 
 const router = express.Router();

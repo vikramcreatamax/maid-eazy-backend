@@ -1,9 +1,9 @@
 import { validationResult } from 'express-validator';
 import { Request, Response } from 'express';
-import Review from '../models/Review';
-import Maid from '../models/Maid';
+import Review from '../models/Review.js';
+import Maid from '../models/Maid.js';
 import mongoose from 'mongoose';
-import cloudinary from '../middleware/cloudinary';
+import cloudinary from '../middleware/cloudinary.js';
 
 interface MulterFile extends Express.Multer.File {
   buffer: Buffer;

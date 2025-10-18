@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import User from '../models/User';
+import User from '../models/User.js';
 
 export const requireAdmin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {

@@ -1,8 +1,7 @@
 import { validationResult } from 'express-validator';
-import Service from '../models/Service';
-import Booking from '../models/Booking';
-import User from '../models/User';
-import { startBookingTimer, extendBookingTimer } from '../server';
+import Service from '../models/Service.js';
+import Booking from '../models/Booking.js';
+import User from '../models/User.js';
 function generateBookingReference() {
     return 'ME-' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5).toUpperCase();
 }
@@ -10,14 +9,26 @@ export const createBooking = async (req, res) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            res.status(400).json({ success: false, errors: errors.array() });
-            return;
+            return res.status(400).json({ success: false, errors: errors.array() });
+        }
+        const currentDate = new Date();
+        const selectedDate = new Date(req.body.bookingDate);
+        const today = new Date(currentDate.toDateString());
+        const bookingDay = new Date(selectedDate.toDateString());
+        if (bookingDay < today) {
+            return res.status(400).json({
+                success: false,
+                message: "Booking date must be today or a future date"
+            });
         }
         const { serviceId, addressId, bookingDate, startTime } = req.body;
         const userId = req.user._id;
         let address = "";
+        const user = await User.findById(userId).select("wallet_balance addresses");
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
         if (!addressId) {
-            const user = await User.findById(userId).select("addresses");
             address = user?.addresses[0]?._id?.toString() ?? "";
         }
         const service = await Service.findById(serviceId).select('duration total_amount base_price_per_hour');
@@ -37,6 +48,15 @@ export const createBooking = async (req, res) => {
             status: 'pending',
             booking_reference: bookingReference
         });
+        if (!booking)
+            return res.status(400).json({ success: false, message: "Something Went Wrong" });
+        if ((user?.wallet_balance ?? 0) > (service?.total_amount ?? 0)) {
+            user.wallet_balance = (user?.wallet_balance ?? 0) - (service?.total_amount ?? 0);
+            await user.save();
+        }
+        else {
+            return res.status(400).json({ success: false, message: "Insufficient wallet balance", });
+        }
         return res.status(201).json({ success: true, message: "Booking Created Successful", bookingId: booking });
     }
     catch (error) {
@@ -50,7 +70,7 @@ export const getUserBookings = async (req, res) => {
         const bookings = await Booking.find({ user_id: userId })
             .populate('maid_id', 'name')
             .populate('service_id', 'service_name')
-            .select('_id booking_date start_time duration_hours total_amount status booking_reference address_id maid_id service_id')
+            .select('_id booking_date pin start_time duration_hours total_amount status booking_reference address_id maid_id service_id')
             .sort({ booking_date: -1 });
         const user = await User.findById(userId).select('addresses');
         const transformedBookings = bookings.map(booking => {
@@ -94,6 +114,64 @@ export const updateBookingStatus = async (req, res) => {
     catch (error) {
         console.error(error);
         return res.status(500).json({ success: false, message: 'Server error updating status' });
+    }
+};
+export const submitPinAndStartTimer = async (req, res) => {
+    try {
+        const { bookingId } = req.params;
+        const { pin } = req.body;
+        const maidId = req.user._id;
+        if (!bookingId) {
+            return res.status(400).json({ success: false, message: 'Booking ID is required' });
+        }
+        const booking = await Booking.findOne({ _id: bookingId, maid_id: maidId });
+        if (!booking) {
+            return res.status(404).json({ success: false, message: 'Booking not found or not assigned to this maid' });
+        }
+        if (booking.pin !== String(pin)) {
+            return res.status(400).json({ success: false, message: 'Invalid PIN' });
+        }
+        const actualStartTime = new Date();
+        const timerEndTime = new Date(actualStartTime.getTime() + (booking.duration_hours + booking.extend_time) * 60 * 60 * 1000);
+        await Booking.findByIdAndUpdate(bookingId, {
+            actual_start_time: actualStartTime,
+            timer_end_time: timerEndTime,
+            status: 'ongoing'
+        });
+        return res.json({ success: true, message: 'Timer started successfully', timerEndTime });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server error starting timer' });
+    }
+};
+export const extendBookingTime = async (req, res) => {
+    try {
+        const { bookingId } = req.params;
+        const { extendHours } = req.body;
+        const userId = req.user._id;
+        if (!bookingId) {
+            return res.status(400).json({ success: false, message: 'Booking ID is required' });
+        }
+        const booking = await Booking.findOne({ _id: bookingId, user_id: userId, status: 'ongoing' });
+        console.log(booking);
+        if (!booking) {
+            return res.status(404).json({ success: false, message: 'Booking not found or not ongoing' });
+        }
+        if (!booking.timer_end_time) {
+            return res.status(400).json({ success: false, message: 'Timer not started yet' });
+        }
+        const newExtendTime = booking.extend_time + extendHours;
+        const newTimerEndTime = new Date(booking.timer_end_time.getTime() + extendHours * 60 * 60 * 1000);
+        await Booking.findByIdAndUpdate(bookingId, {
+            extend_time: newExtendTime,
+            timer_end_time: newTimerEndTime
+        });
+        return res.json({ success: true, message: 'Time extended successfully', newTimerEndTime });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server error extending time' });
     }
 };
 export const getBookingsForAdmin = async (req, res) => {
@@ -154,72 +232,13 @@ export const assignMaidToBooking = async (req, res) => {
         const booking = await Booking.findById({ _id: bookingId, });
         if (!booking)
             return res.status(404).json({ success: false, message: 'Booking not found' });
-        const pin = Math.floor(100000 + Math.random() * 900000).toString();
+        const pin = Math.floor(1000 + Math.random() * 9000).toString();
         const updateBooking = await Booking.findByIdAndUpdate(bookingId, { status, maid_id, pin }, { new: true });
         return res.json({ success: true, message: 'Booking status updated', updateBooking });
     }
     catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Server error updating status' });
-    }
-};
-export const submitPinAndStartTimer = async (req, res) => {
-    try {
-        const { bookingId } = req.params;
-        const { pin } = req.body;
-        const maidId = req.user._id;
-        if (!bookingId) {
-            return res.status(400).json({ success: false, message: 'Booking ID is required' });
-        }
-        const booking = await Booking.findOne({ _id: bookingId, maid_id: maidId });
-        if (!booking) {
-            return res.status(404).json({ success: false, message: 'Booking not found or not assigned to this maid' });
-        }
-        if (booking.pin !== pin) {
-            return res.status(400).json({ success: false, message: 'Invalid PIN' });
-        }
-        const actualStartTime = new Date();
-        const timerEndTime = new Date(actualStartTime.getTime() + (booking.duration_hours + booking.extend_time) * 60 * 60 * 1000);
-        await Booking.findByIdAndUpdate(bookingId, {
-            actual_start_time: actualStartTime,
-            timer_end_time: timerEndTime,
-            status: 'ongoing'
-        });
-        startBookingTimer(bookingId, timerEndTime);
-        return res.json({ success: true, message: 'Timer started successfully', timerEndTime });
-    }
-    catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: 'Server error starting timer' });
-    }
-};
-export const extendBookingTime = async (req, res) => {
-    try {
-        const { bookingId } = req.params;
-        const { extendHours } = req.body;
-        const userId = req.user._id;
-        if (!bookingId) {
-            return res.status(400).json({ success: false, message: 'Booking ID is required' });
-        }
-        const booking = await Booking.findOne({ _id: bookingId, user_id: userId, status: 'ongoing' });
-        if (!booking) {
-            return res.status(404).json({ success: false, message: 'Booking not found or not ongoing' });
-        }
-        if (!booking.timer_end_time) {
-            return res.status(400).json({ success: false, message: 'Timer not started yet' });
-        }
-        const newExtendTime = booking.extend_time + extendHours;
-        const newTimerEndTime = new Date(booking.timer_end_time.getTime() + extendHours * 60 * 60 * 1000);
-        await Booking.findByIdAndUpdate(bookingId, {
-            extend_time: newExtendTime,
-            timer_end_time: newTimerEndTime
-        });
-        extendBookingTimer(bookingId, newTimerEndTime);
-        return res.json({ success: true, message: 'Time extended successfully', newTimerEndTime });
-    }
-    catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: 'Server error extending time' });
     }
 };
 //# sourceMappingURL=bookingController.js.map

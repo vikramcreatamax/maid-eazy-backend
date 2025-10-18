@@ -1,8 +1,11 @@
 import express from 'express';
+import multer from "multer";
 import { body } from 'express-validator';
 import { authenticateToken } from '../middleware/auth.js';
-import { getProfile, updateProfile, addAddress, getAddresses, updateAddress, deleteAddress } from '../controllers/userController';
+import { getProfile, updateProfile, addAddress, getAddresses, updateAddress, deleteAddress } from '../controllers/userController.js';
 const router = express.Router();
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 router.use(authenticateToken);
 const profileValidation = [
     body('fullName').optional().isLength({ min: 2 }).withMessage('Full Name min 2 chars'),
@@ -17,7 +20,7 @@ const addressValidation = [
     body('pincode').notEmpty().withMessage('Pincode required'),
 ];
 router.get('/profile', getProfile);
-router.patch('/profile', profileValidation, updateProfile);
+router.patch('/profile', profileValidation, upload.single("file"), updateProfile);
 router.post('/addresses', addressValidation, addAddress);
 router.get('/addresses', getAddresses);
 router.patch('/addresses/:addressId', updateAddress);

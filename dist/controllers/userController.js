@@ -1,5 +1,6 @@
 import { validationResult } from 'express-validator';
-import User from '../models/User';
+import User from '../models/User.js';
+import cloudinary from '../middleware/cloudinary.js';
 export const getProfile = async (req, res) => {
     try {
         const userId = req.user._id;
@@ -18,8 +19,21 @@ export const getProfile = async (req, res) => {
 export const updateProfile = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        res.status(400).json({ success: false, errors: errors.array() });
-        return;
+        return res.status(400).json({ success: false, errors: errors.array() });
+    }
+    const file = req.file;
+    if (file) {
+        const imageUrl = await new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream({ folder: "maideazy" }, (error, result) => {
+                if (error)
+                    return reject(error);
+                if (result)
+                    return resolve(result.secure_url);
+                reject(new Error("Upload failed"));
+            });
+            uploadStream.end(file.buffer);
+        });
+        req.body.profile_image = imageUrl;
     }
     const userId = req.user._id;
     const data = req.body;

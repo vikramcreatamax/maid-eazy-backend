@@ -6,10 +6,8 @@ export interface IMaidAvailability extends Document {
     end_time: string;
     is_booked: boolean;
 }
-declare const _default: mongoose.Model<IMaidAvailability, {}, {}, {}, mongoose.Document<unknown, {}, IMaidAvailability, {}, {}> & IMaidAvailability & Required<{
-    _id: unknown;
-}> & {
-    __v: number;
+declare const _default: mongoose.Model<IMaidAvailability, {}, {}, {}, mongoose.Document<unknown, {}, IMaidAvailability> & IMaidAvailability & {
+    _id: mongoose.Types.ObjectId;
 }, any>;
 export default _default;
 //# sourceMappingURL=MaidAvailability.d.ts.map

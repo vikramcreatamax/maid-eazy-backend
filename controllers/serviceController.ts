@@ -1,8 +1,8 @@
 // import { Service } from '../models/index';
 import { Request, Response } from 'express';
-import Service from '../models/Service';
+import Service from '../models/Service.js';
 import { validationResult } from 'express-validator';
-import Booking from '../models/Booking';
+import Booking from '../models/Booking.js';
 
 // Get all active services
 export const getAllServices = async (req: Request, res: Response): Promise<void> => {

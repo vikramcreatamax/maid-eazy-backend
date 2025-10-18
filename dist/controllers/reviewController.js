@@ -1,15 +1,30 @@
 import { validationResult } from 'express-validator';
-import Review from '../models/Review';
-import Maid from '../models/Maid';
+import Review from '../models/Review.js';
+import Maid from '../models/Maid.js';
 import mongoose from 'mongoose';
+import cloudinary from '../middleware/cloudinary.js';
 export const addReview = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ success: false, errors: errors.array() });
-    }
-    const { bookingId, maidId, rating, reviewMessage, isAnonymous } = req.body;
-    const userId = req.user._id;
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ success: false, errors: errors.array() });
+        }
+        const files = req.files;
+        if (files && files.length > 0) {
+            const uploadedImages = await Promise.all(files.map((file) => new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream({ folder: "maideazy" }, (error, result) => {
+                    if (error)
+                        return reject(error);
+                    if (result)
+                        return resolve(result.secure_url);
+                    reject(new Error("Upload failed"));
+                });
+                uploadStream.end(file.buffer);
+            })));
+            req.body.images = uploadedImages;
+        }
+        const { bookingId, maidId, rating, reviewMessage, isAnonymous } = req.body;
+        const userId = req.user._id;
         const existingReview = await Review.findOne({ booking_id: bookingId, maid_id: maidId, user_id: userId });
         if (existingReview)
             return res.status(400).json({
@@ -22,6 +37,7 @@ export const addReview = async (req, res) => {
             maid_id: maidId,
             rating,
             review_message: reviewMessage || null,
+            images: req.body.images || [],
             is_anonymous: !!isAnonymous
         });
         const stats = await Review.aggregate([

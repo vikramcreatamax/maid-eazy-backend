@@ -1,8 +1,8 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { assignMaidToBooking, createBooking, getBookingsForAdmin, getUserBookings, updateBookingStatus } from '../controllers/bookingController';
+import { assignMaidToBooking, createBooking, getBookingsForAdmin, getUserBookings, updateBookingStatus } from '../controllers/bookingController.js';
 import { authenticateToken } from '../middleware/auth.js';
-import { requireAdmin } from '../middleware/admin';
+import { requireAdmin } from '../middleware/admin.js';
 
 const router = express.Router();
 

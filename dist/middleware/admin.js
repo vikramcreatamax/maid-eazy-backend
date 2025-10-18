@@ -1,4 +1,4 @@
-import User from '../models/User';
+import User from '../models/User.js';
 export const requireAdmin = async (req, res, next) => {
     try {
         const userId = req.user._id;

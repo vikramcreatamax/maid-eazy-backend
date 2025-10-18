@@ -1,7 +1,7 @@
 import express from 'express';
-import { authenticateToken } from '../middleware/auth';
-import { requireAdmin } from '../middleware/admin';
-import { getAllServices, getServiceById, createService, updateService, deleteService } from '../controllers/serviceController';
+import { authenticateToken } from '../middleware/auth.js';
+import { requireAdmin } from '../middleware/admin.js';
+import { getAllServices, getServiceById, createService, updateService, deleteService, viewAllServices } from '../controllers/serviceController.js';
 import { body } from 'express-validator';
 const router = express.Router();
 const serviceValidation = [
@@ -12,6 +12,7 @@ const serviceValidation = [
 ];
 router.use(authenticateToken);
 router.get('/', getAllServices);
+router.get('/view-services', requireAdmin, viewAllServices);
 router.get('/:serviceId', getServiceById);
 router.post('/', requireAdmin, serviceValidation, createService);
 router.patch('/:serviceId', requireAdmin, updateService);

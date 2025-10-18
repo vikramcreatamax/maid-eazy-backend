@@ -1,6 +1,6 @@
 import express from 'express';
-import { authenticateToken } from '../middleware/auth';
-import { requireAdmin } from '../middleware/admin';
+import { authenticateToken } from '../middleware/auth.js';
+import { requireAdmin } from '../middleware/admin.js';
 import {
   getAllMaids,
   getMaidById,
@@ -9,7 +9,7 @@ import {
   updateMaid,
   deleteMaid,
   getBookingsByMaid
-} from '../controllers/maidController';
+} from '../controllers/maidController.js';
 
 const router = express.Router();
 

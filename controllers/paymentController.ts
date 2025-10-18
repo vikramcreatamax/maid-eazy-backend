@@ -1,7 +1,7 @@
 // import { Payment } from '../models/index.js';
 import { Request, RequestHandler, Response } from 'express';
-import Payment from '../models/Payment';
-import User from '../models/User';
+import Payment from '../models/Payment.js';
+import User from '../models/User.js';
 import Razorpay from 'razorpay';
 import crypto from "crypto";
 

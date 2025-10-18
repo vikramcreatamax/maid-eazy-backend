@@ -1,5 +1,6 @@
-import Service from '../models/Service';
+import Service from '../models/Service.js';
 import { validationResult } from 'express-validator';
+import Booking from '../models/Booking.js';
 export const getAllServices = async (req, res) => {
     try {
         const services = await Service.find({ is_active: true })
@@ -77,6 +78,29 @@ export const deleteService = async (req, res) => {
     catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Server error deleting service' });
+    }
+};
+export const viewAllServices = async (req, res) => {
+    try {
+        console.log("calleddd.d");
+        const services = await Service.find()
+            .select('_id service_name description base_price_per_hour total_amount is_active');
+        console.log("calledd..", services);
+        if (services.length === 0) {
+            return res.status(404).json({ success: false, message: "Services Not Found" });
+        }
+        const servicesWithCount = await Promise.all(services.map(async (service) => {
+            const bookingCount = await Booking.countDocuments({ service_id: service._id });
+            return {
+                ...service.toObject(),
+                bookingCount
+            };
+        }));
+        return res.status(200).json({ success: true, data: servicesWithCount });
+    }
+    catch (error) {
+        console.error("Error in viewAllServices:", error);
+        return res.status(500).json({ success: false, message: 'Internal Server error' });
     }
 };
 //# sourceMappingURL=serviceController.js.map

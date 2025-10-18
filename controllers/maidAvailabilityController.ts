@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import MaidAvailability from '../models/MaidAvailability';
+import MaidAvailability from '../models/MaidAvailability.js';
 
 // Get availability for a specific maid
 export const getMaidAvailability = async (req: Request, res: Response): Promise<void> => {

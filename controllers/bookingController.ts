@@ -1,8 +1,8 @@
 import { validationResult } from 'express-validator';
 import { Request, Response } from 'express';
-import Service from '../models/Service';
-import Booking from '../models/Booking';
-import User from '../models/User';
+import Service from '../models/Service.js';
+import Booking from '../models/Booking.js';
+import User from '../models/User.js';
 import mongoose from 'mongoose';
 // import { startBookingTimer, extendBookingTimer } from '../socket/socketHandler';
 // import { io } from '../server';

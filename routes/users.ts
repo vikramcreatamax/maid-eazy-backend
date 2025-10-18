@@ -2,7 +2,7 @@ import express from 'express';
 import multer from "multer"
 import { body } from 'express-validator';
 import { authenticateToken } from '../middleware/auth.js';
-import { getProfile, updateProfile, addAddress, getAddresses, updateAddress, deleteAddress } from '../controllers/userController';
+import { getProfile, updateProfile, addAddress, getAddresses, updateAddress, deleteAddress } from '../controllers/userController.js';
 
 const router = express.Router();
 

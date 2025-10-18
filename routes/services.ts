@@ -1,6 +1,6 @@
 import express from 'express';
-import { authenticateToken } from '../middleware/auth';
-import { requireAdmin } from '../middleware/admin';
+import { authenticateToken } from '../middleware/auth.js';
+import { requireAdmin } from '../middleware/admin.js';
 import {
   getAllServices,
   getServiceById,
@@ -8,7 +8,7 @@ import {
   updateService,
   deleteService,
   viewAllServices
-} from '../controllers/serviceController';
+} from '../controllers/serviceController.js';
 import { body } from 'express-validator';
 
 const router = express.Router();

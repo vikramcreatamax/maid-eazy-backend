@@ -1,6 +1,6 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { register, login, verifyOtp } from '../controllers/authController';
+import { register, login, verifyOtp } from '../controllers/authController.js';
 const router = express.Router();
 const registerValidation = [
     body('fullName').isLength({ min: 2 }).withMessage('Full Name required'),

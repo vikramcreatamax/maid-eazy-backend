@@ -43,15 +43,15 @@ app.use("/",(req,res)=>{
   res.send("Hello World")
 })
 // Routes
-import authRoutes from './routes/auth';
-import userRoutes from './routes/users';
-import maidRoutes from './routes/maids';
-import serviceRoutes from './routes/services';
-import maidAvailabilityRoutes from './routes/maidAvailability';
-import bookingRoutes from './routes/bookings';
-import paymentRoutes from './routes/payments';
-import reviewRoutes from './routes/reviews';
-import connectDB from './config/database';
+import authRoutes from './routes/auth.js';
+import userRoutes from './routes/users.js';
+import maidRoutes from './routes/maids.js';
+import serviceRoutes from './routes/services.js';
+import maidAvailabilityRoutes from './routes/maidAvailability.js';
+import bookingRoutes from './routes/bookings.js';
+import paymentRoutes from './routes/payments.js';
+import reviewRoutes from './routes/reviews.js';
+import connectDB from './config/database.js';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);

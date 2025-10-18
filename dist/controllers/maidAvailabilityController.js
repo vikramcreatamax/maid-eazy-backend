@@ -1,4 +1,4 @@
-import MaidAvailability from '../models/MaidAvailability';
+import MaidAvailability from '../models/MaidAvailability.js';
 export const getMaidAvailability = async (req, res) => {
     try {
         const maidId = req.params.maidId;

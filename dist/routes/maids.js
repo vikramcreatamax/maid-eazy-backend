@@ -1,7 +1,7 @@
 import express from 'express';
-import { authenticateToken } from '../middleware/auth';
-import { requireAdmin } from '../middleware/admin';
-import { getAllMaids, getMaidById, getAvailability, createMaid, updateMaid, deleteMaid, getBookingsByMaid } from '../controllers/maidController';
+import { authenticateToken } from '../middleware/auth.js';
+import { requireAdmin } from '../middleware/admin.js';
+import { getAllMaids, getMaidById, getAvailability, createMaid, updateMaid, deleteMaid, getBookingsByMaid } from '../controllers/maidController.js';
 const router = express.Router();
 router.use(authenticateToken);
 router.get('/', getAllMaids);

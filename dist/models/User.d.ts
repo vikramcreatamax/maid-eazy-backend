@@ -24,10 +24,8 @@ export interface IUser extends Document {
     login_otp_expire?: Date;
     addresses: IAddress[];
 }
-declare const _default: mongoose.Model<IUser, {}, {}, {}, mongoose.Document<unknown, {}, IUser, {}, {}> & IUser & Required<{
-    _id: unknown;
-}> & {
-    __v: number;
+declare const _default: mongoose.Model<IUser, {}, {}, {}, mongoose.Document<unknown, {}, IUser> & IUser & {
+    _id: mongoose.Types.ObjectId;
 }, any>;
 export default _default;
 //# sourceMappingURL=User.d.ts.map
