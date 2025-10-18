@@ -1,0 +1,16 @@
+import mongoose, { Document } from 'mongoose';
+export interface IService extends Document {
+    service_name: string;
+    description?: string;
+    duration?: number;
+    base_price_per_hour: number;
+    total_amount: number;
+    is_active: boolean;
+}
+declare const _default: mongoose.Model<IService, {}, {}, {}, mongoose.Document<unknown, {}, IService, {}, {}> & IService & Required<{
+    _id: unknown;
+}> & {
+    __v: number;
+}, any>;
+export default _default;
+//# sourceMappingURL=Service.d.ts.map

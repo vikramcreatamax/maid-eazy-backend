@@ -1,0 +1,705 @@
+{
+  "info": {
+    "name": "MaidEazy Backend API",
+    "description": "Complete API collection for MaidEazy backend with MongoDB/Mongoose",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"9876543210\",\n  \"house\": \"123 Main Street\",\n  \"apartment\": \"Apt 4B\",\n  \"landmark\": \"Near Central Park\",\n  \"city\": \"New York\",\n  \"pincode\": \"10001\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Send OTP (Login)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('token', response.token);",
+                  "    console.log('OTP:', response.loginOTP);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"otp\": \"1234\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/verify-otp",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "verify-otp"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Management",
+      "item": [
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["users", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Update User Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Updated\",\n  \"phone\": \"9876543211\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["users", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Add Address",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address_line1\": \"123 Main Street\",\n  \"address_line2\": \"Apartment 4B\",\n  \"city\": \"Mumbai\",\n  \"state\": \"Maharashtra\",\n  \"pincode\": \"400001\",\n  \"landmark\": \"Near Central Mall\",\n  \"latitude\": 19.0760,\n  \"longitude\": 72.8777,\n  \"is_default\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/addresses",
+              "host": ["{{base_url}}"],
+              "path": ["users", "addresses"]
+            }
+          }
+        },
+        {
+          "name": "Get User Addresses",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/addresses",
+              "host": ["{{base_url}}"],
+              "path": ["users", "addresses"]
+            }
+          }
+        },
+        {
+          "name": "Update Address",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address_line1\": \"456 Updated Street\",\n  \"city\": \"Delhi\",\n  \"is_default\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/addresses/:addressId",
+              "host": ["{{base_url}}"],
+              "path": ["users", "addresses", ":addressId"],
+              "variable": [
+                {
+                  "key": "addressId",
+                  "value": "YOUR_ADDRESS_ID"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Address",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/addresses/:addressId",
+              "host": ["{{base_url}}"],
+              "path": ["users", "addresses", ":addressId"],
+              "variable": [
+                {
+                  "key": "addressId",
+                  "value": "YOUR_ADDRESS_ID"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Service Management",
+      "item": [
+        {
+          "name": "Get All Services",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/services",
+              "host": ["{{base_url}}"],
+              "path": ["services"]
+            }
+          }
+        },
+        {
+          "name": "Get Service Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/services/:serviceId",
+              "host": ["{{base_url}}"],
+              "path": ["services", ":serviceId"],
+              "variable": [
+                {
+                  "key": "serviceId",
+                  "value": "YOUR_SERVICE_ID"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Service (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"service_name\": \"House Cleaning\",\n  \"description\": \"Complete house cleaning service including dusting, vacuuming, and bathroom cleaning\",\n  \"base_price_per_hour\": 150.00\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/services",
+              "host": ["{{base_url}}"],
+              "path": ["services"]
+            }
+          }
+        },
+        {
+          "name": "Update Service (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"service_name\": \"Deep House Cleaning\",\n  \"base_price_per_hour\": 200.00\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/services/:serviceId",
+              "host": ["{{base_url}}"],
+              "path": ["services", ":serviceId"],
+              "variable": [
+                {
+                  "key": "serviceId",
+                  "value": "YOUR_SERVICE_ID"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Service (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/services/:serviceId",
+              "host": ["{{base_url}}"],
+              "path": ["services", ":serviceId"],
+              "variable": [
+                {
+                  "key": "serviceId",
+                  "value": "YOUR_SERVICE_ID"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Maid Management",
+      "item": [
+        {
+          "name": "Get All Maids",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/maids",
+              "host": ["{{base_url}}"],
+              "path": ["maids"]
+            }
+          }
+        },
+        {
+          "name": "Get Maid Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/maids/:maidId",
+              "host": ["{{base_url}}"],
+              "path": ["maids", ":maidId"],
+              "variable": [
+                {
+                  "key": "maidId",
+                  "value": "YOUR_MAID_ID"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Maid Availability",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/maids/:maidId/availability",
+              "host": ["{{base_url}}"],
+              "path": ["maids", ":maidId", "availability"],
+              "variable": [
+                {
+                  "key": "maidId",
+                  "value": "YOUR_MAID_ID"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Maid (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sarah Johnson\",\n  \"email\": \"sarah@example.com\",\n  \"phone\": \"9876543211\",\n  \"experience_years\": 5,\n  \"hourly_rate\": 200.00,\n  \"bio\": \"Professional house cleaner with 5 years of experience\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/maids",
+              "host": ["{{base_url}}"],
+              "path": ["maids"]
+            }
+          }
+        },
+        {
+          "name": "Update Maid (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sarah Johnson Updated\",\n  \"hourly_rate\": 250.00,\n  \"experience_years\": 6\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/maids/:maidId",
+              "host": ["{{base_url}}"],
+              "path": ["maids", ":maidId"],
+              "variable": [
+                {
+                  "key": "maidId",
+                  "value": "YOUR_MAID_ID"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Maid (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/maids/:maidId",
+              "host": ["{{base_url}}"],
+              "path": ["maids", ":maidId"],
+              "variable": [
+                {
+                  "key": "maidId",
+                  "value": "YOUR_MAID_ID"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Booking Management",
+      "item": [
+        {
+          "name": "Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maidId\": \"YOUR_MAID_ID\",\n  \"serviceId\": \"YOUR_SERVICE_ID\",\n  \"addressId\": \"YOUR_ADDRESS_ID\",\n  \"bookingDate\": \"2024-12-25\",\n  \"startTime\": \"10:00\",\n  \"durationHours\": 3\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/bookings",
+              "host": ["{{base_url}}"],
+              "path": ["bookings"]
+            }
+          }
+        },
+        {
+          "name": "Get User Bookings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/bookings",
+              "host": ["{{base_url}}"],
+              "path": ["bookings"]
+            }
+          }
+        },
+        {
+          "name": "Update Booking Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"confirmed\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/bookings/:bookingId/status",
+              "host": ["{{base_url}}"],
+              "path": ["bookings", ":bookingId", "status"],
+              "variable": [
+                {
+                  "key": "bookingId",
+                  "value": "YOUR_BOOKING_ID"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payment Management",
+      "item": [
+        {
+          "name": "Process Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookingId\": \"YOUR_BOOKING_ID\",\n  \"amount\": 1500.00,\n  \"paymentMethod\": \"card\",\n  \"transactionId\": \"TXN_123456789\",\n  \"paymentGateway\": \"razorpay\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/process",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "process"]
+            }
+          }
+        },
+        {
+          "name": "Get Payment by Booking",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/booking/:bookingId",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "booking", ":bookingId"],
+              "variable": [
+                {
+                  "key": "bookingId",
+                  "value": "YOUR_BOOKING_ID"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Review Management",
+      "item": [
+        {
+          "name": "Add Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookingId\": \"YOUR_BOOKING_ID\",\n  \"maidId\": \"YOUR_MAID_ID\",\n  \"rating\": 5,\n  \"reviewMessage\": \"Excellent service! Very professional and punctual.\",\n  \"isAnonymous\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/reviews",
+              "host": ["{{base_url}}"],
+              "path": ["reviews"]
+            }
+          }
+        },
+        {
+          "name": "Get Reviews by Maid",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reviews/maid/:maidId",
+              "host": ["{{base_url}}"],
+              "path": ["reviews", "maid", ":maidId"],
+              "variable": [
+                {
+                  "key": "maidId",
+                  "value": "YOUR_MAID_ID"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

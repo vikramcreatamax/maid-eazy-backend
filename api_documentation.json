@@ -1,0 +1,578 @@
+[
+  {
+    "api_url": "POST /api/auth/register",
+    "payload": {
+      "fullName": "string (required, min 2 chars)",
+      "email": "string (required, valid email)",
+      "phone": "string (required, valid phone)",
+      "house": "string (optional)",
+      "apartment": "string (optional)",
+      "landmark": "string (optional)",
+      "city": "string (optional)",
+      "pincode": "string (optional)"
+    },
+    "response": {
+      "success": true,
+      "message": "Register Successful",
+      "token": "string",
+      "user": "object"
+    }
+  },
+  {
+    "api_url": "POST /api/auth/login",
+    "payload": {
+      "phone": "string (required, valid phone)"
+    },
+    "response": {
+      "success": true,
+      "message": "otp sent successful",
+      "loginOTP": "number",
+      "token": "string",
+      "user": {
+        "id": "string",
+        "fullName": "string",
+        "email": "string",
+        "phone": "string"
+      }
+    }
+  },
+  {
+    "api_url": "POST /api/auth/verify-otp",
+    "payload": {
+      "phone": "string (required)",
+      "otp": "string (required)"
+    },
+    "response": {
+      "success": true,
+      "message": "login successful",
+      "user": "object",
+      "token": "string"
+    }
+  },
+  {
+    "api_url": "POST /api/bookings",
+    "payload": {
+      "serviceId": "string (required)",
+      "addressId": "string (optional)",
+      "bookingDate": "string (required, ISO8601 date)",
+      "startTime": "string (required, HH:MM format)"
+    },
+    "response": {
+      "success": true,
+      "message": "Booking Created Successful",
+      "bookingId": "object"
+    }
+  },
+  {
+    "api_url": "GET /api/bookings",
+    "payload": {},
+    "response": {
+      "success": true,
+      "data": [
+        {
+          "booking_id": "string",
+          "booking_date": "date",
+          "start_time": "string",
+          "duration_hours": "number",
+          "total_amount": "number",
+          "status": "string",
+          "booking_reference": "string",
+          "maid_name": "string",
+          "service_name": "string",
+          "address": "object"
+        }
+      ]
+    }
+  },
+  {
+    "api_url": "PATCH /api/bookings/:bookingId/status",
+    "payload": {
+      "status": "string (required, one of: pending, confirmed, ongoing, completed, cancelled)"
+    },
+    "response": {
+      "success": true,
+      "message": "Booking status updated"
+    }
+  },
+  {
+    "api_url": "POST /api/bookings/:bookingId/submit-pin",
+    "payload": {
+      "pin": "string (required)"
+    },
+    "response": {
+      "success": true,
+      "message": "Timer started successfully",
+      "timerEndTime": "date"
+    }
+  },
+  {
+    "api_url": "POST /api/bookings/:bookingId/extend-time",
+    "payload": {
+      "extendHours": "number (required)"
+    },
+    "response": {
+      "success": true,
+      "message": "Time extended successfully",
+      "newTimerEndTime": "date"
+    }
+  },
+  {
+    "api_url": "GET /api/bookings/all-booking",
+    "payload": {},
+    "response": {
+      "success": true,
+      "data": [
+        {
+          "booking_id": "string",
+          "booking_date": "date",
+          "start_time": "string",
+          "duration_hours": "number",
+          "total_amount": "number",
+          "status": "string",
+          "booking_reference": "string",
+          "maid_name": "string",
+          "maid_phone": "string",
+          "maid_skill": "string",
+          "maid_address": "string",
+          "service_name": "string",
+          "service_description": "string",
+          "service_price": "number",
+          "user_name": "string",
+          "user_phone": "string",
+          "user_address": "object"
+        }
+      ]
+    }
+  },
+  {
+    "api_url": "PUT /api/bookings/:bookingId",
+    "payload": {
+      "status": "string (required, confirmed)",
+      "maid_id": "string (required)"
+    },
+    "response": {
+      "success": true,
+      "message": "Booking status updated",
+      "updateBooking": "object"
+    }
+  },
+  {
+    "api_url": "GET /api/maid-availability/maid/:maidId",
+    "payload": {},
+    "response": {
+      "success": true,
+      "data": [
+        {
+          "available_date": "date",
+          "start_time": "string",
+          "end_time": "string",
+          "is_booked": "boolean"
+        }
+      ]
+    }
+  },
+  {
+    "api_url": "POST /api/maid-availability/maid/:maidId",
+    "payload": {
+      "available_date": "string (required)",
+      "start_time": "string (required)",
+      "end_time": "string (required)"
+    },
+    "response": {
+      "success": true,
+      "data": "object"
+    }
+  },
+  {
+    "api_url": "PATCH /api/maid-availability/:availabilityId",
+    "payload": {
+      "available_date": "string (optional)",
+      "start_time": "string (optional)",
+      "end_time": "string (optional)",
+      "is_booked": "boolean (optional)"
+    },
+    "response": {
+      "success": true,
+      "data": "object"
+    }
+  },
+  {
+    "api_url": "DELETE /api/maid-availability/:availabilityId",
+    "payload": {},
+    "response": {
+      "success": true,
+      "message": "Availability deleted successfully"
+    }
+  },
+  {
+    "api_url": "GET /api/maid-availability",
+    "payload": {},
+    "response": {
+      "success": true,
+      "data": [
+        {
+          "available_date": "date",
+          "start_time": "string",
+          "end_time": "string",
+          "is_booked": "boolean",
+          "maid_id": {
+            "name": "string",
+            "email": "string",
+            "phone": "string",
+            "age": "number",
+            "skill": "string",
+            "languages": "array",
+            "work_type": "string",
+            "experience_years": "number"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "api_url": "GET /api/maids",
+    "payload": {},
+    "response": {
+      "success": true,
+      "data": [
+        {
+          "_id": "string",
+          "name": "string",
+          "experience_years": "number",
+          "hourly_rate": "number",
+          "work_type": "string",
+          "address": "string",
+          "phone": "string",
+          "languages": "array",
+          "skill": "string",
+          "rating": "number",
+          "total_reviews": "number",
+          "profile_image": "string"
+        }
+      ]
+    }
+  },
+  {
+    "api_url": "GET /api/maids/:maidId",
+    "payload": {},
+    "response": {
+      "success": true,
+      "data": "object (full maid details)"
+    }
+  },
+  {
+    "api_url": "GET /api/maids/:maidId/availability",
+    "payload": {},
+    "response": {
+      "success": true,
+      "data": [
+        {
+          "available_date": "date",
+          "start_time": "string",
+          "end_time": "string",
+          "is_booked": "boolean"
+        }
+      ]
+    }
+  },
+  {
+    "api_url": "POST /api/maids",
+    "payload": {
+      "name": "string (required)",
+      "email": "string (required)",
+      "phone": "string (required)",
+      "experience_years": "number (required)",
+      "hourly_rate": "number (required)",
+      "bio": "string (optional)"
+    },
+    "response": {
+      "success": true,
+      "data": "object"
+    }
+  },
+  {
+    "api_url": "PATCH /api/maids/:maidId",
+    "payload": {
+      "name": "string (optional)",
+      "email": "string (optional)",
+      "phone": "string (optional)",
+      "experience_years": "number (optional)",
+      "hourly_rate": "number (optional)",
+      "bio": "string (optional)"
+    },
+    "response": {
+      "success": true,
+      "data": "object"
+    }
+  },
+  {
+    "api_url": "DELETE /api/maids/:maidId",
+    "payload": {},
+    "response": {
+      "success": true,
+      "message": "Maid deactivated successfully"
+    }
+  },
+  {
+    "api_url": "GET /api/maids/bookings/:maidId",
+    "payload": {},
+    "response": {
+      "success": true,
+      "data": [
+        {
+          "booking_id": "string",
+          "booking_date": "date",
+          "start_time": "string",
+          "duration_hours": "number",
+          "total_amount": "number",
+          "status": "string",
+          "booking_reference": "string",
+          "service_name": "string",
+          "service_description": "string",
+          "service_price": "number",
+          "user_name": "string",
+          "user_phone": "string",
+          "user_address": "object"
+        }
+      ]
+    }
+  },
+  {
+    "api_url": "POST /api/payments/process",
+    "payload": {
+      "bookingId": "string (optional)",
+      "amount": "number (required)",
+      "paymentMethod": "string (required)",
+      "transactionId": "string (required)",
+      "paymentGateway": "string (required)"
+    },
+    "response": {
+      "success": true,
+      "message": "Payment recorded"
+    }
+  },
+  {
+    "api_url": "GET /api/payments/booking/:bookingId",
+    "payload": {},
+    "response": {
+      "success": true,
+      "data": "object (payment details)"
+    }
+  },
+  {
+    "api_url": "GET /api/payments",
+    "payload": {},
+    "response": {
+      "success": true,
+      "data": "object (payment details)"
+    }
+  },
+  {
+    "api_url": "POST /api/payments/add-amount",
+    "payload": {
+      "amount": "number (required)",
+      "currency": "string (required)",
+      "receipt": "string (required)"
+    },
+    "response": {
+      "success": true,
+      "order": "object"
+    }
+  },
+  {
+    "api_url": "POST /api/payments/verify-amount",
+    "payload": {
+      "razorpay_order_id": "string (required)",
+      "razorpay_payment_id": "string (required)",
+      "razorpay_signature": "string (required)"
+    },
+    "response": {
+      "msg": "success",
+      "orderId": "string",
+      "paymentId": "string"
+    }
+  },
+  {
+    "api_url": "POST /api/reviews",
+    "payload": {
+      "bookingId": "string (optional)",
+      "maidId": "string (optional)",
+      "rating": "number (required, 1-5)",
+      "reviewMessage": "string (optional)",
+      "images": "array (optional, multipart files)"
+    },
+    "response": {
+      "success": true,
+      "message": "Review submitted successfully."
+    }
+  },
+  {
+    "api_url": "GET /api/reviews/maid/:maidId",
+    "payload": {},
+    "response": {
+      "success": true,
+      "data": [
+        {
+          "rating": "number",
+          "review_message": "string",
+          "created_at": "date",
+          "user_name": "string",
+          "is_anonymous": "boolean"
+        }
+      ]
+    }
+  },
+  {
+    "api_url": "GET /api/services",
+    "payload": {},
+    "response": {
+      "success": true,
+      "data": [
+        {
+          "_id": "string",
+          "service_name": "string",
+          "description": "string",
+          "base_price_per_hour": "number"
+        }
+      ]
+    }
+  },
+  {
+    "api_url": "GET /api/services/view-services",
+    "payload": {},
+    "response": {
+      "success": true,
+      "data": [
+        {
+          "_id": "string",
+          "service_name": "string",
+          "description": "string",
+          "base_price_per_hour": "number",
+          "total_amount": "number",
+          "is_active": "boolean",
+          "bookingCount": "number"
+        }
+      ]
+    }
+  },
+  {
+    "api_url": "GET /api/services/:serviceId",
+    "payload": {},
+    "response": {
+      "success": true,
+      "data": "object (full service details)"
+    }
+  },
+  {
+    "api_url": "POST /api/services",
+    "payload": {
+      "service_name": "string (required)",
+      "description": "string (required)",
+      "duration": "number (required)",
+      "base_price_per_hour": "number (required)"
+    },
+    "response": {
+      "success": true,
+      "data": "object"
+    }
+  },
+  {
+    "api_url": "PATCH /api/services/:serviceId",
+    "payload": {
+      "service_name": "string (optional)",
+      "description": "string (optional)",
+      "duration": "number (optional)",
+      "base_price_per_hour": "number (optional)"
+    },
+    "response": {
+      "success": true,
+      "data": "object"
+    }
+  },
+  {
+    "api_url": "DELETE /api/services/:serviceId",
+    "payload": {},
+    "response": {
+      "success": true,
+      "message": "Service deactivated successfully"
+    }
+  },
+  {
+    "api_url": "GET /api/users/profile",
+    "payload": {},
+    "response": {
+      "success": true,
+      "data": {
+        "_id": "string",
+        "name": "string",
+        "email": "string",
+        "phone": "string",
+        "profile_image": "string"
+      }
+    }
+  },
+  {
+    "api_url": "PATCH /api/users/profile",
+    "payload": {
+      "fullName": "string (optional, min 2 chars)",
+      "phone": "string (optional)",
+      "email": "string (optional)",
+      "file": "multipart file (optional)"
+    },
+    "response": {
+      "success": true,
+      "message": "Profile updated",
+      "User": "object"
+    }
+  },
+  {
+    "api_url": "POST /api/users/addresses",
+    "payload": {
+      "house": "string (required)",
+      "apartment": "string (required)",
+      "landmark": "string (required)",
+      "city": "string (required)",
+      "pincode": "string (required)",
+      "latitude": "number (optional)",
+      "longitude": "number (optional)",
+      "is_default": "boolean (optional)"
+    },
+    "response": {
+      "success": true,
+      "message": "Address Save Successful"
+    }
+  },
+  {
+    "api_url": "GET /api/users/addresses",
+    "payload": {},
+    "response": {
+      "success": true,
+      "data": "array (addresses)"
+    }
+  },
+  {
+    "api_url": "PATCH /api/users/addresses/:addressId",
+    "payload": {
+      "house": "string (optional)",
+      "apartment": "string (optional)",
+      "landmark": "string (optional)",
+      "city": "string (optional)",
+      "pincode": "string (optional)",
+      "latitude": "number (optional)",
+      "longitude": "number (optional)",
+      "is_default": "boolean (optional)"
+    },
+    "response": {
+      "success": true,
+      "message": "Address updated"
+    }
+  },
+  {
+    "api_url": "DELETE /api/users/addresses/:addressId",
+    "payload": {},
+    "response": {
+      "success": true,
+      "message": "Address deleted"
+    }
+  }
+]
