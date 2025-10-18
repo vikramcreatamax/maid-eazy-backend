@@ -5,7 +5,7 @@ import Booking from '../models/Booking';
 import User from '../models/User';
 import mongoose from 'mongoose';
 import { startBookingTimer, extendBookingTimer } from '../socket/socketHandler';
-import { io } from '../server';
+// import { io } from '../server';
 
 function generateBookingReference(): string {
   return 'ME-' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5).toUpperCase();
@@ -162,7 +162,7 @@ export const submitPinAndStartTimer = async (req: Request, res: Response): Promi
     });
 
     // Start the real-time timer
-    startBookingTimer(io, bookingId, timerEndTime);
+    // startBookingTimer(io, bookingId, timerEndTime);
 
     return res.json({ success: true, message: 'Timer started successfully', timerEndTime });
   } catch (error) {
@@ -198,7 +198,7 @@ export const extendBookingTime = async (req: Request, res: Response): Promise<an
     });
 
     // Extend the real-time timer
-    extendBookingTimer(io, bookingId, newTimerEndTime);
+    // extendBookingTimer(io, bookingId, newTimerEndTime);
 
     return res.json({ success: true, message: 'Time extended successfully', newTimerEndTime });
   } catch (error) {

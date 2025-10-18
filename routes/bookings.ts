@@ -1,6 +1,6 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { assignMaidToBooking, createBooking, getBookingsForAdmin, getUserBookings, updateBookingStatus, submitPinAndStartTimer, extendBookingTime } from '../controllers/bookingController';
+import { assignMaidToBooking, createBooking, getBookingsForAdmin, getUserBookings, updateBookingStatus } from '../controllers/bookingController';
 import { authenticateToken } from '../middleware/auth.js';
 import { requireAdmin } from '../middleware/admin';
 
@@ -20,8 +20,8 @@ const bookingValidation = [
 router.post('/', bookingValidation, createBooking);
 router.get('/', getUserBookings);
 router.patch('/:bookingId/status', updateBookingStatus);
-router.post('/:bookingId/submit-pin', submitPinAndStartTimer);
-router.post('/:bookingId/extend-time', extendBookingTime);
+// router.post('/:bookingId/submit-pin', submitPinAndStartTimer);
+// router.post('/:bookingId/extend-time', extendBookingTime);
 // Admin only routes
 router.get('/all-booking', requireAdmin, getBookingsForAdmin);
 router.put("/:bookingId", requireAdmin, assignMaidToBooking)
